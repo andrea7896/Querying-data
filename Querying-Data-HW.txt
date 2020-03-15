@@ -1,0 +1,40 @@
+
+1.Crear una consulta usando agrupación y utilizar la cláusula HAVING.
+//Consulta que trae la informacion de tabla hotel cuyo precio sea menor a 5000 y su ID sea 3  
+SELECT * FROM hotel WHERE price < 5000 HAVING idHotel = 3;
+
+
+2.Utilizar subquery en alguna consulta.
+//Consulta que trae los datos del hotel de aquellos cuyo id coincida con el id en la tabla de reservaciones.
+SELECT * FROM hotel WHERE idHotel IN (SELECT idHotel FROM booking);
+
+3.Hacer uso de operadores de UNION consultando más de 2 tablas.
+//Consulta que une las tablas de hotel y ciudad para traer los nombre de Estado y ciudad.
+SELECT hotel.*,cities.stateName,cities.cityName FROM hotel INNER JOIN cities ON hotel.idCity = cities.idCity HAVING idCity = 1;
+
+
+***PROCEDURE PARA UN SOFT DELETE POR ID DE RESERVACION***
+DELIMITER //
+CREATE procedure softDelete(IN idBookingFilter INT)
+BEGIN
+	UPDATE booking 
+    	SET active = 0
+    	ERE idBooking = idBookingFilter;
+END//
+DELIMITER ;
+
+CALL softDelete(1);
+
+***FUNCION SUMA DE PRECIOS DE HOTEL POR CATEGORIA****
+
+DELIMITER //
+CREATE FUNCTION sumPrices(idFilter INT)
+	RETURNS INT DETERMINISTIC
+    BEGIN
+    DECLARE suma double;
+    SET suma = (SELECT SUM(price) FROM hotel WHERE idCategory = idFilter );
+    RETURN suma;
+    END; //
+DELIMITER 
+
+SELECT sumPrices(1);
